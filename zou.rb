@@ -13,9 +13,6 @@ require "open-uri"
 #/invite nick #canal
 
 
-#require 'cinch'
-#require 'open-uri'
-
 class Seen < Struct.new(:who, :where, :what, :time)
   def to_s
     "[#{time.asctime}] #{who} foi visto em #{where} falando: #{what}"

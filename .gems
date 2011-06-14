@@ -1,3 +1,2 @@
-gem "sinatra"
-gem "cinch"
-gem "open-uri"
+sinatra
+cinch
