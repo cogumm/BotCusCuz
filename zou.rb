@@ -1,5 +1,6 @@
 #encoding: utf-8
 
+require 'rubygems'
 require "sinatra"
 require "cinch"
 require "open-uri"
