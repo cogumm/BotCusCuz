@@ -5,6 +5,8 @@ require "sinatra"
 require "cinch"
 require "open-uri"
 
+set :cache, Dalli::Client.new
+
 # => Iniciando o código do bot
 
 #http://www.advogados.com.br/canal_sjc/comandos_de_irc.htm
