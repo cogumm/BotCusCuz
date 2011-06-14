@@ -128,7 +128,7 @@ bot = Cinch::Bot.new do
 
   # Entra e sai de um canal
   on :connect do
-    bot.join "##testao"
+    bot.join "#ZouGames"
   end
 
   on :message, /^.entra (.+)/ do |m, channel|
