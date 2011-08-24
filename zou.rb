@@ -4,8 +4,12 @@ require 'rubygems'
 require "sinatra"
 require "cinch"
 require "open-uri"
+require 'nokogiri'
+require 'cgi'
 
-set :cache, Dalli::Client.new
+get "/" do
+  erb :index
+end
 
 # => Iniciando o código do bot
 
@@ -27,7 +31,7 @@ bot = Cinch::Bot.new do
     c.server    = "irc.freenode.org"
     c.realname  = "BotCusCuz o seu Bot do dia-a-dia!"
     c.channels  = ["#ZouGames"]
-    c.nick      = "ZouGames"
+    c.nick      = "BotCusCuz"
     #c.password  = "comando"
     c.secure    = true
     c.verbose   = true
@@ -37,16 +41,39 @@ bot = Cinch::Bot.new do
     @admin      = "CoGUMm"
     @users      = {}
   end
-  
-  on :join do |m|
-    m.reply "Seja bem vindo #{m.user.nick}, ao #{m.channel}!" unless m.user.nick == bot.nick
-  end
 
   helpers do
     def is_admin?(user)
       true if user.nick == @admin
     end
+    # Pega o primeiro resultado retornado pelo Google
+    # caso contrário "Resultado não encontrado!!" 
+    def google(query)
+      url = "http://www.google.com/search?q=#{CGI.escape(query)}"
+      res = Nokogiri::HTML(open(url)).at("h3.r")
+
+      title = res.text
+      link = res.at('a')[:href]
+      desc = res.at("./following::div").children.first.text
+    rescue
+      "Resultado não encontrado!!"
+    else
+#      m.reply "Primeiro resultado retornado pelo Google:"
+      CGI.unescape_html "#{title} - #{desc} (#{link})"
+    end
+
+    # API URELE
+    def shorten(url)
+      url = open("http://urele.com/api/create_url?url=#{URI.escape(url)}").read
+      url == "Error" ? nil : url
+    rescue OpenURI::HTTPError
+      nil
+    end
   end
+  
+#  on :join do |m|
+#    m.reply "Seja bem vindo ao #{m.channel} #{m.user.nick}! Para qualquer ajuda digite HELP ou AJUDA!" unless m.user.nick == bot.nick
+#  end
 
   # Envia mensagem em PVT
   on :message, /^.privado (.+?) (.+)/ do |m, who, text|
@@ -54,13 +81,13 @@ bot = Cinch::Bot.new do
   end
 
 
-  on :message, "ola ZouGames" do |m|
+  on :message, "ola BotCusCuz" do |m|
     m.reply "Olá, #{m.user.nick}!"
   end
 
-  # Only log channel messages
+# Only log channel messages
 #  on :channel do |m|
- #   @users[m.user.nick] = Nick.new(m.user.nick, m.channel, m.message, Time.new)
+#   @users[m.user.nick] = Nick.new(m.user.nick, m.channel, m.message, Time.new)
 #  end
 
   on :channel, /^.nick (.+)/ do |m, nick|
@@ -69,7 +96,8 @@ bot = Cinch::Bot.new do
     elsif nick == m.user.nick
       m.reply "Esse é você, #{nick}! o.O'"
     elsif @users.key?(nick)
-      m.reply @users[nick].to_s
+#      m.reply @users[nick].to_s
+      m.reply "Olá {#nick}!"
     else
       m.reply "Eu não sei quem é esse tal de #{nick}!! =("
     end
@@ -144,30 +172,54 @@ bot = Cinch::Bot.new do
   # Fim entra e sai de um canal
 
   # Encurtar links
-  # API URELE
-  helpers do
-    def shorten(url)
-      url = open("http://urele.com/api/create_url?url=#{URI.escape(url)}").read
-      url == "Error" ? nil : url
-    rescue OpenURI::HTTPError
-      nil
+  on :channel, /^.link/ do |m|
+    urls = URI.extract(m.message, "http")
+
+      unless urls.empty?
+      short_urls = urls.map {|url| shorten(url) }.compact
+
+      unless short_urls.empty?
+        m.reply short_urls.join("Sua URL: ")
+      end
     end
   end
+  # Fim encurtador
 
-  on :channel, /^.link/ do |m|
-#  on :channel do |m|
+  # Pesquisa Google
+  on :message, /^.google (.+)/ do |m, query|
+    m.reply google(query)
+  end
+
+  on :channel do |m|
     urls = URI.extract(m.message, "http")
 
     unless urls.empty?
       short_urls = urls.map {|url| shorten(url) }.compact
 
       unless short_urls.empty?
-        m.reply short_urls.join("Sua url #{m.user.nick}: ")
+        m.reply short_urls.join(", ")
       end
     end
   end
-  # Fim encurtador
+  # Fim da Pesquisa Google
 
+  # Help
+#  on :message, /^.help|h|HELP|AJUDA|ajuda/ do |m|
+#    m.reply "BotCusCuz Bot"
+#    m.reply "Para encurtar uma URL longa basta utilizar o comando:"
+#    m.reply ".link <SUA URL>"
+#    m.reply " "
+#    m.reply "Quer utilizar o google de forma bem rápida?"
+#    m.reply ".google <SUA PESQUISA>"
+#    m.reply " "
+#    m.reply "Enviar uma mensagem privada para alguêm:"
+#    m.reply ".privado <NICK> <SUA MENSAGEM>"
+#    m.reply " "
+#    m.reply "Digite .nick <NICK> e veja o resultado! =D"
+#    m.reply " "
+#    m.reply "Visite www.ZouGames.org"
+#    m.reply "Bot desenvolvido por CoGUMm utilizando Ruby + Sinatra"
+#  end
 
 
 
