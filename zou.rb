@@ -32,7 +32,7 @@ bot = Cinch::Bot.new do
     c.realname  = "BotCusCuz o seu Bot do dia-a-dia!"
     c.channels  = ["#ZouGames"]
     c.nick      = "BotCusCuz"
-    #c.password  = "comando"
+    c.password  = "comando"
     c.secure    = true
     c.verbose   = true
     
