@@ -7,14 +7,11 @@ require "open-uri"
 require 'nokogiri'
 require 'cgi'
 
-get "/" do
-  erb :index
-end
-
 # => Iniciando o código do bot
 
 #http://www.advogados.com.br/canal_sjc/comandos_de_irc.htm
 #http://fit.faccat.br/~jackson/comandos.html
+#http://www.prof2000.pt/users/lpitta/ajuda/mirc/lista_cmd_mirc.htm
 
 #/kick #canal nick mensagem
 #/invite nick #canal
@@ -26,13 +23,25 @@ class Seen < Struct.new(:who, :where, :what, :time)
   end
 end
 
+# Server
+SERVER      = "irc.freenode.org"
+PORT        = 6667
+CHANNELS     = ["#zougames", "#rails-br"]
+
+# Bot
+NICK        = "BotCusCuz"
+SECRET      = "SENHA"
+INTERVAL    = 300
+REALNAME    = "BotCusCuz o seu Bot do dia-a-dia!"
+
 bot = Cinch::Bot.new do
   configure do |c|
-    c.server    = "irc.freenode.org"
-    c.realname  = "BotCusCuz o seu Bot do dia-a-dia!"
-    c.channels  = ["#ZouGames"]
-    c.nick      = "BotCusCuz"
-    c.password  = "SENHA"
+    c.server    = SERVER
+    c.port      = PORT
+    c.channels  = CHANNELS
+    c.nick      = NICK
+    c.password  = SECRET
+    c.realname  = REALNAME
     c.secure    = true
     c.verbose   = true
     
@@ -71,9 +80,9 @@ bot = Cinch::Bot.new do
     end
   end
   
-#  on :join do |m|
-#    m.reply "Seja bem vindo ao #{m.channel} #{m.user.nick}! Para qualquer ajuda digite HELP ou AJUDA!" unless m.user.nick == bot.nick
-#  end
+  on :join do |m|
+    m.reply "Seja bem vindo ao #{m.channel} #{m.user.nick}! Para qualquer ajuda digite HELP ou AJUDA." unless m.user.nick == bot.nick
+  end
 
   # Envia mensagem em PVT
   on :message, /^.privado (.+?) (.+)/ do |m, who, text|
@@ -97,7 +106,7 @@ bot = Cinch::Bot.new do
       m.reply "Esse é você, #{nick}! o.O'"
     elsif @users.key?(nick)
 #      m.reply @users[nick].to_s
-      m.reply "Olá {#nick}!"
+      m.reply "Olá #{m.user.nick}!"
     else
       m.reply "Eu não sei quem é esse tal de #{nick}!! =("
     end
@@ -153,9 +162,9 @@ bot = Cinch::Bot.new do
   # Dá op e tira de um <nick>  
 
   # Entra e sai de um canal
-  on :connect do
-    bot.join "#ZouGames"
-  end
+#  on :connect do
+#    bot.join "#ZouGames"
+#  end
 
   on :message, /^.entra (.+)/ do |m, channel|
     bot.join(channel) if is_admin?(m.user)
@@ -204,24 +213,34 @@ bot = Cinch::Bot.new do
   # Fim da Pesquisa Google
 
   # Help
-#  on :message, /^.help|h|HELP|AJUDA|ajuda/ do |m|
-#    m.reply "BotCusCuz Bot"
-#    m.reply "Para encurtar uma URL longa basta utilizar o comando:"
-#    m.reply ".link <SUA URL>"
-#    m.reply " "
-#    m.reply "Quer utilizar o google de forma bem rápida?"
-#    m.reply ".google <SUA PESQUISA>"
-#    m.reply " "
-#    m.reply "Enviar uma mensagem privada para alguêm:"
-#    m.reply ".privado <NICK> <SUA MENSAGEM>"
-#    m.reply " "
+  on :message, /^.help|.h|.HELP|.AJUDA|.ajuda/ do |m|
+    m.reply "BotCusCuz Bot"
+    m.reply "Para encurtar uma URL longa basta utilizar o comando:"
+    m.reply ".link <SUA URL>"
+    m.reply " "
+    m.reply "Quer utilizar o google de forma bem rápida?"
+    m.reply ".google <SUA PESQUISA>"
+    m.reply " "
+    m.reply "Enviar uma mensagem privada para alguêm:"
+    m.reply ".privado <NICK> <SUA MENSAGEM>"
+    m.reply " "
 #    m.reply "Digite .nick <NICK> e veja o resultado! =D"
 #    m.reply " "
 #    m.reply "Visite www.ZouGames.org"
-#    m.reply "Bot desenvolvido por CoGUMm utilizando Ruby + Sinatra"
-#  end
+    m.reply "Quer dar uma melhorada em mim? Veja o meu repositório!!"
+    m.reply ".repo"
+    m.reply " "
+    m.reply "Bot desenvolvido por CoGUMm utilizando Ruby + Sinatra"
+  end
 
+  on :message, /^.repo/ do |m|
+    REPO = "#{m.user.nick}, caso queira ajudar, esse é o meu repositório! https://cogumm@github.com/cogumm/BotCusCuz.git"
+    m.reply REPO
+  end
 
+  on :channel, /^.list (.+)/ do |users, channel|
+    channel.users
+  end
 
 
 end
