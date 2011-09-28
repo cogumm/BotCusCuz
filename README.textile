@@ -13,13 +13,17 @@ h2. Modo de usar
 
 <pre>
 $ cd BotCusCuz
-$ gem install sinatra
-$ gem install cinch
+$ gem install bundle
+$ bundle install
+$ mv config/configBot_exemple.rb configBot.rb
 </pre>
 
+Para rodar o BOT dê o sequinte comando:
+
 <pre>
-$ ruby zou.rb
+$ ruby -rubygems zou.rb
 </pre>
+
 
 h2. License
 
