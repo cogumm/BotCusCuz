@@ -1,6 +1,4 @@
 #encoding: utf-8
-require 'bundler/setup'
-
 require File.expand_path( File.dirname(__FILE__) + '/config/config' )
 
 # => Iniciando o código do bot
@@ -26,9 +24,36 @@ bot = Cinch::Bot.new do
     @admin      = "CoGUMm"
     @users      = {}
   end
-  
-  require File.expand_path( File.dirname(__FILE__) + '/config/helpers' )
 
+  helpers do
+    def is_admin?(user)
+      true if user.nick == @admin
+    end
+    # Pega o primeiro resultado retornado pelo Google
+    # caso contrário "Resultado não encontrado!!" 
+    def google(query)
+      url = "http://www.google.com/search?q=#{CGI.escape(query)}"
+      res = Nokogiri::HTML(open(url)).at("h3.r")
+
+      title = res.text
+      link = res.at('a')[:href]
+      desc = res.at("./following::div").children.first.text
+    rescue
+      "Resultado não encontrado!!"
+    else
+#      m.reply "Primeiro resultado retornado pelo Google:"
+      CGI.unescape_html "#{title} - #{desc} (#{link})"
+    end
+
+    # API URELE
+    def shorten(url)
+      url = open("http://urele.com/api/create_url?url=#{URI.escape(url)}").read
+      url == "Error" ? nil : url
+    rescue OpenURI::HTTPError
+      nil
+    end
+  end
+  
   on :join do |m|
     m.reply "Seja bem vindo ao #{m.channel} #{m.user.nick}! Para qualquer ajuda digite HELP ou AJUDA." unless m.user.nick == bot.nick
   end
@@ -39,9 +64,9 @@ bot = Cinch::Bot.new do
   end
 
 
-  on :message, /ola|olá|OLA|OLÁ|Olá|Ola|\. BotCusCuz/ do |m|
-    m.reply "Olá, #{m.user.nick}!"
-  end
+#  on :message, /ola|olá|OLA|OLÁ|Olá|Ola|\. BotCusCuz/ do |m|
+#    m.reply "Olá, #{m.user.nick}!"
+#  end
 
 # Only log channel messages
 #  on :channel do |m|
@@ -108,7 +133,7 @@ bot = Cinch::Bot.new do
       m.channel.devoice(m.user) if is_admin?(m.user)
     end
   end
-  # Dá op e tira de um <nick>   
+  # Dá op e tira de um <nick>  
 
   # Entra e sai de um canal
 #  on :connect do
@@ -187,11 +212,10 @@ bot = Cinch::Bot.new do
     m.reply REPO
   end
 
-  on :channel, /^.list (.+)/ do |users, channel|
-    channel.users
-  end
+#  on :channel, /^.list (.+)/ do |users, channel|
+#    channel.users
+#  end
 
 
 end
-
 bot.start

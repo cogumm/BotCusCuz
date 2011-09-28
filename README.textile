@@ -13,7 +13,7 @@ h2. Modo de usar
 
 <pre>
 $ cd BotCusCuz
-$ gem install bundle
+$ gem install bundler
 $ bundle install
 $ mv config/configBot_exemple.rb configBot.rb
 </pre>
