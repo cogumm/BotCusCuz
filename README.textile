@@ -21,7 +21,7 @@ $ mv config/configBot_exemple.rb configBot.rb
 Para rodar o BOT dê o sequinte comando:
 
 <pre>
-$ ruby -rubygems zou.rb
+$ ruby -rubygems bot.rb
 </pre>
 
 

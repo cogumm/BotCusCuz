@@ -1,0 +1,14 @@
+============== Sites para consultas COMANDOS IRC =================
+http://fit.faccat.br/~jackson/comandos.html
+http://www.advogados.com.br/canal_sjc/comandos_de_irc.htm
+http://www.prof2000.pt/users/lpitta/ajuda/mirc/lista_cmd_mirc.htm
+==================================================================
+
+
+TODO: Ver por que o @admin não está funcionando
+TODO: Criar plugin para todos os módulos
+
+NOTE:
+#/kick "#canal" "nick" "mensagem"
+#/invite "nick" "#canal"
+
