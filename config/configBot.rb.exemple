@@ -1,0 +1,10 @@
+# Server
+SERVER      = "irc.freenode.org"
+PORT        = 6667
+CHANNELS    = ["#Cuscuz", "#PotiLivre"]
+
+# Bot
+NICK        = "NICK"
+SECRET      = "SENHA"
+INTERVAL    = 300
+REALNAME    = "BotCusCuz o seu Bot do dia-a-dia!"
