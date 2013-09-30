@@ -18,7 +18,7 @@ bot = Cinch::Bot.new do
     c.realname  = REALNAME
     c.secure    = true
     c.verbose   = true
-    
+
     @autovoice  = false
     @autoop     = false
     @admin      = "CoGUMm"
@@ -30,7 +30,7 @@ bot = Cinch::Bot.new do
       true if user.nick == @admin
     end
     # Pega o primeiro resultado retornado pelo Google
-    # caso contrário "Resultado não encontrado!!" 
+    # caso contrário "Resultado não encontrado!!"
     def google(query)
       url = "http://www.google.com/search?q=#{CGI.escape(query)}"
       res = Nokogiri::HTML(open(url)).at("h3.r")
@@ -53,9 +53,9 @@ bot = Cinch::Bot.new do
       nil
     end
   end
-  
+
   on :join do |m|
-    m.reply "Seja bem vindo ao #{m.channel} #{m.user.nick}! Para qualquer ajuda digite HELP ou AJUDA." unless m.user.nick == bot.nick
+    m.reply "Seja bem vindo ao #{m.channel} #{m.user.nick}! Para qualquer ajuda digite .HELP ou .h." unless m.user.nick == bot.nick
   end
 
   # Envia mensagem em PVT
@@ -108,7 +108,7 @@ bot = Cinch::Bot.new do
     end
   end
   # Fim autoOp e autoVoice
-  
+
   # Dá op e voice e tira de um <nick>
   on :message, /.op (.+)/ do |m|
     unless m.user.nick == bot.nick
@@ -121,19 +121,19 @@ bot = Cinch::Bot.new do
       m.channel.deop(m.user) if is_admin?(m.user)
     end
   end
-  
+
   on :message, /.voice (.+)/ do |m|
     unless m.user.nick == bot.nick
       m.channel.voice(m.user) if is_admin?(m.user)
     end
   end
-  
+
   on :message, /.devoice (.+)/ do |m|
     unless m.user.nick == bot.nick
       m.channel.devoice(m.user) if is_admin?(m.user)
     end
   end
-  # Dá op e tira de um <nick>  
+  # Dá op e tira de um <nick>
 
   # Entra e sai de um canal
 #  on :connect do
@@ -208,7 +208,7 @@ bot = Cinch::Bot.new do
   end
 
   on :message, /^.repo/ do |m|
-    REPO = "#{m.user.nick}, caso queira ajudar, esse é o meu repositório! https://cogumm@github.com/cogumm/BotCusCuz.git"
+    REPO = "#{m.user.nick}, caso queira ajudar, esse é o meu repositório! https://github.com/cogumm/BotCusCuz"
     m.reply REPO
   end
 

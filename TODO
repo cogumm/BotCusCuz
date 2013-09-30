@@ -5,10 +5,12 @@ http://www.prof2000.pt/users/lpitta/ajuda/mirc/lista_cmd_mirc.htm
 ==================================================================
 
 
-TODO: Criar plugin para todos os módulos
+TODO:
+Criar plugin para todos os módulos
+Verificar por que não faz nickserver: /msg NickServ identify SENHA
+
 
 NOTE:
 #/kick "#canal" "nick" "mensagem"
 #/invite "nick" "#canal"
 #/list "#canal"
-
